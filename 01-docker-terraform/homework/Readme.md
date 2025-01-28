@@ -53,5 +53,41 @@ ORDER BY trip_count DESC;
 104,802; 198,924; 109,603; 27,678; 35,189
 
 ## Question 4
+SELECT DATE(lpep_pickup_datetime) as day
+FROM public.green_trip_data
+WHERE trip_distance = (
+    SELECT MAX(trip_distance)
+    FROM public.green_trip_data)
 
 Answer: 2019-10-31
+
+## Question 5
+SELECT t."Zone" as zone, SUM(total_amount) as sum
+FROM public."green_tripdata_2019-10" as g
+LEFT JOIN public.taxi_zone_lookup as t
+ON g."PULocationID" = t."LocationID"
+WHERE g.lpep_pickup_datetime::date = '2019-10-18'
+GROUP BY t."Zone"
+HAVING SUM(g.total_amount) >= 13000
+ORDER BY sum DESC;
+
+Answer: East Harlem North, East Harlem South, Morningside Heights
+
+## Question 6
+SELECT MAX(tip_amount), t2."Zone"
+FROM public."green_tripdata_2019-10" as g
+LEFT JOIN public.taxi_zone_lookup as t1
+ON g."PULocationID" = t1."LocationID"
+LEFT JOIN public.taxi_zone_lookup as t2
+ON g."DOLocationID" = t2."LocationID"
+WHERE t1."Zone" = 'East Harlem North'
+AND g.lpep_pickup_datetime::date 
+BETWEEN '2019-10-01' AND '2019-10-31'
+GROUP BY t2."Zone"
+ORDER BY MAX(tip_amount) DESC;
+
+Answer: JFK Airport
+
+## Question 7
+
+Answer: terraform init, terraform apply -auto-approve, terraform destroy
